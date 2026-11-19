@@ -1,11 +1,25 @@
 from dotenv import load_dotenv
 import streamlit as st
 from langchain_groq import ChatGroq
+from streamlit.errors import StreamlitSecretNotFoundError
+import os
+
 load_dotenv()
 
-st.set_page_config(page_title="Blood Work Analyzer", layout="wide")
+groq_api_key = os.getenv("GROQ_API_KEY")
+if not groq_api_key:
+    try:
+        groq_api_key = st.secrets.get("GROQ_API_KEY")
+    except StreamlitSecretNotFoundError:
+        groq_api_key = None
 
-llm = ChatGroq(model="qwen/qwen3.8-27b", reasoning_format="parsed")
+llm = ChatGroq(
+    model="qwen/qwen3.8-27b",
+    reasoning_format="parsed",
+    api_key=groq_api_key,
+) if groq_api_key else None
+
+st.set_page_config(page_title="Blood Work Analyzer", layout="wide")
 
 st.markdown("""
 <style>
@@ -55,7 +69,10 @@ with right_col:
     diet_box.markdown('<div class="scroll-box"></div>', unsafe_allow_html=True)
 
 if analyze_clicked:
-    if not blood_report.strip():
+    if not groq_api_key:
+        with left_col:
+            st.warning("Configure GROQ_API_KEY in your local .env file or Streamlit Cloud secrets before analyzing.")
+    elif not blood_report.strip():
         with left_col:
             st.warning("Please paste a blood work report before analyzing.")
     else:

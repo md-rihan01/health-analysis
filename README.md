@@ -28,6 +28,14 @@ GROQ_API_KEY=your_groq_api_key
 
 Keep API keys private; do not commit `.env` files.
 
+For Streamlit Community Cloud, add the key in **App settings → Secrets** using TOML:
+
+```toml
+GROQ_API_KEY = "your_groq_api_key"
+```
+
+Select Python 3.14 in the app's advanced deployment settings to match the repository's `.python-version` and `pyproject.toml`.
+
 ## Run the app
 
 From the repository root:

@@ -27,20 +27,21 @@ st.markdown("""
     height: 230px;
     overflow-y: auto;
     padding: 12px 16px;
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    background-color: #1e1e1e;
+    background-color: var(--secondary-background-color);
+    color: var(--text-color);
     font-size: 0.9rem;
     line-height: 1.6;
 }
 .scroll-box p, .scroll-box li {
-    color: #e0e0e0;
+    color: var(--text-color);
 }
 .section-label {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 6px;
-    color: #ffffff;
+    color: var(--text-color);
 }
 </style>
 """, unsafe_allow_html=True)

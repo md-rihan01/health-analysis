@@ -23,25 +23,53 @@ st.set_page_config(page_title="Blood Work Analyzer", layout="wide")
 
 st.markdown("""
 <style>
-.scroll-box {
-    height: 230px;
-    overflow-y: auto;
-    padding: 12px 16px;
+.st-key-health-output,
+.st-key-diet-output {
+    box-sizing: border-box;
+    max-width: 100%;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background-color: var(--secondary-background-color);
+    border-radius: 10px;
     color: var(--text-color);
-    font-size: 0.9rem;
-    line-height: 1.6;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
 }
-.scroll-box p, .scroll-box li {
+.st-key-health-output {
+    background: color-mix(in srgb, var(--primary-color) 7%, var(--secondary-background-color));
+}
+.st-key-diet-output {
+    background: color-mix(in srgb, var(--primary-color) 12%, var(--secondary-background-color));
+}
+.st-key-health-output p,
+.st-key-health-output li,
+.st-key-diet-output p,
+.st-key-diet-output li,
+.st-key-health-output h1,
+.st-key-health-output h2,
+.st-key-health-output h3,
+.st-key-diet-output h1,
+.st-key-diet-output h2,
+.st-key-diet-output h3 {
     color: var(--text-color);
 }
-.section-label {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 6px;
+.st-key-health-output h1,
+.st-key-health-output h2,
+.st-key-health-output h3,
+.st-key-diet-output h1,
+.st-key-diet-output h2,
+.st-key-diet-output h3 {
+    line-height: 1.3;
+}
+.st-key-health-output strong,
+.st-key-diet-output strong {
     color: var(--text-color);
+    font-weight: 700;
+}
+@media (max-width: 640px) {
+    .st-key-health-output,
+    .st-key-diet-output {
+        font-size: 0.9rem;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -62,12 +90,10 @@ with left_col:
 
 with right_col:
     st.subheader("Health Summary")
-    health_box = st.empty()
-    health_box.markdown('<div class="scroll-box"></div>', unsafe_allow_html=True)
+    health_box = st.container(height=230, border=True, key="health-output")
 
     st.subheader("Suggested Diet Plan")
-    diet_box = st.empty()
-    diet_box.markdown('<div class="scroll-box"></div>', unsafe_allow_html=True)
+    diet_box = st.container(height=230, border=True, key="diet-output")
 
 if analyze_clicked:
     if not groq_api_key:
@@ -123,12 +149,8 @@ Blood Work Analysis:
             health_summary = full_response
             diet_plan = ""
 
-        # Render into fixed-height scrollable boxes
-        health_box.markdown(
-            f'<div class="scroll-box">{health_summary}</div>',
-            unsafe_allow_html=True
-        )
-        diet_box.markdown(
-            f'<div class="scroll-box">{diet_plan if diet_plan else full_response}</div>',
-            unsafe_allow_html=True
-        )
+        # Render generated Markdown inside themed, scrollable output containers.
+        with health_box:
+            st.markdown(health_summary)
+        with diet_box:
+            st.markdown(diet_plan if diet_plan else full_response)
